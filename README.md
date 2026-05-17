@@ -12,7 +12,7 @@ Sistema web desenvolvido em **Flask** para gerenciamento de produtos de uma loja
 
 ## 🚀 Funcionalidades
 
-## 📊 Consultas Implementadas
+## 📊 Consultas SQL Implementadas
 
 | Tipo | Consultas |
 |------|-----------|
@@ -26,6 +26,9 @@ Sistema web desenvolvido em **Flask** para gerenciamento de produtos de uma loja
 - Listagem completa de produtos
 - Exibição de todas as consultas em tabelas organizadas
 - Design responsivo (funciona em desktop e mobile)
+- Modo Escuro (respeita preferência do sistema)
+- Botão "voltar ao topo" em dispositivos móveis
+- Favicon personalizado
 - Cards interativos com métricas
 - Cores e hover effects para melhor experiência
 
@@ -39,13 +42,79 @@ Sistema web desenvolvido em **Flask** para gerenciamento de produtos de uma loja
 - SSD 1TB	R$ 600,00	Armazenamento	12
 - Produto Preço 50	R$ 50,00	Eletrônicos	15
 
+# 🧩 Arquitetura Modular
+
+O projeto foi organizado de forma modular para facilitar manutenção e escalabilidade:
+
+## 📁 Estrutura do Projeto
+
+lojas_flask/
+├── app.py # Aplicação principal (rotas + segurança)
+├── queries.py # Todas as consultas SQL centralizadas
+├── requirements.txt # Dependências do projeto
+├── .env # Variáveis de ambiente (não versionado)
+├── static/
+│ ├── main.css # Estilos principais
+│ ├── mobile.css # Responsividade e Adaptabilidade
+│ ├── async_loading.js # JavaScript assíncrono
+│ └── baturno_web_icon.ico # Favicon
+├── templates/
+│ ├── index.html # Template principal (monta os partials)
+│ └── partials/ # Componentes reutilizáveis
+│ ├── header.html
+│ ├── lista_produtos.html
+│ ├── order_by.html
+│ ├── operadores_relacionais.html
+│ ├── logicos.html
+│ ├── agregacoes.html
+│ └── footer.html
+└── lojas.db # Banco de dados (criado automaticamente)
+
+## 📡 API REST
+
+O sistema expõe endpoints para consumo programático:
+
+| Endpoint | Método | Descrição |
+|----------|--------|-----------|
+| `/api/produtos` | GET | Lista todos os produtos |
+| `/api/consultas/order_by` | GET | ORDER BY crescente/decrescente |
+| `/api/consultas/relacionais` | GET | Operadores relacionais com 50.00 |
+| `/api/consultas/logicas` | GET | Operadores lógicos (AND/OR) |
+| `/api/consultas/agregacoes` | GET | Médias, contagens e agrupamentos |
+
+**Exemplo de resposta da API:**
+```json
+[
+  {
+    "id": 1,
+    "nome": "Teclado Mecânico",
+    "preco": 250.0,
+    "categoria": "Acessórios",
+    "estoque": 10
+  }
+]
+```
+
+## 🔒 Segurança
+
+- Variáveis de ambiente: Chave secreta e modo debug via .env
+
+- Rate limiting: 100 requisições/minuto por IP nas rotas API
+
+- Headers de segurança: X-Content-Type-Options, X-Frame-Options, X-XSS-Protection
+
+- SQL Injection: Parâmetros sanitizados (uso de ? no SQL)
+
+- .gitignore: Arquivos sensíveis (.env, venv, *.db) não são versionados
+
 ## 💻 Pré-requisitos
 Antes de começar, você vai precisar ter instalado em sua máquina:
 - Python 3.8+
 - Git
 - Pip (gerenciador de pacotes Python - já vem com o Python)
 
-🔧 Como Executar o Projeto
+## 🔧 Como Executar o Projeto?
+
 ### 1. Clone o repositório
 
 # via HTTPS
@@ -123,19 +192,6 @@ Endereço	Descrição
 http://127.0.0.1:5000	Localhost (apenas seu computador)
 http://localhost:5000	Mesmo que o endereço acima
 http://192.168.0.X:5000	IP da sua rede local
-
-# 📁 Estrutura do Projeto
-
-lojas_flask/
-├── app.py              # Aplicação principal Flask
-├── requirements.txt    # Dependências do projeto
-├── executar.sh         # Script de inicialização
-├── .gitignore         # Arquivos ignorados pelo Git
-├── static/
-│   └── style.css       # Estilos CSS
-├── templates/
-│   └── index.html      # Template principal
-└── lojas.db            # Banco de dados (criado automaticamente)
 
 ## 🛠️ Tecnologias Utilizadas
 
