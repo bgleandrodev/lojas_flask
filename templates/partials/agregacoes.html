@@ -1,0 +1,22 @@
+<h2>📊 Funções de Agregação</h2>
+<div class="grid-container">
+    <div class="card"><span class="metric">R$ {{ avg_price }}</span><br>💰 Média de preço (todos os produtos)</div>
+    <div class="card"><span class="metric">{{ total_count }}</span><br>🔢 Contagem total de produtos</div>
+    <div class="card"><span class="metric">R$ {{ avg_in_stock }}</span><br>📦 Média de preço (produtos com estoque > 0)</div>
+</div>
+
+<h2>📈 Média de preço por categoria</h2>
+<table>
+    <tr><th>Categoria</th><th>Média de Preço (R$)</th><th>Quantidade</th></tr>
+    {% for row in avg_by_category %}
+    <tr><td>{{ row.categoria }}</td><td>R$ {{ "%.2f"|format(row.media_preco) }}</td><td>{{ row.quantidade }}</td></tr>
+    {% endfor %}
+</table>
+
+<h2>📊 Contagem de produtos por categoria</h2>
+<table>
+    <tr><th>Categoria</th><th>Quantidade</th></tr>
+    {% for row in count_by_category %}
+    <tr><td>{{ row.categoria }}</td><td>{{ row.quantidade }}</td></tr>
+    {% endfor %}
+</table>

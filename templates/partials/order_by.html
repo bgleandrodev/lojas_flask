@@ -1,0 +1,15 @@
+<h2>⬆️ ORDER BY - Preço Crescente</h2>
+<table>
+    <tr><th>Produto</th><th>Preço (R$)</th></tr>
+    {% for p in asc_products %}
+    <tr><td>{{ p.nome }}</td><td>R$ {{ "%.2f"|format(p.preco) }}</td></tr>
+    {% endfor %}
+</table>
+
+<h2>⬇️ ORDER BY - Preço Decrescente</h2>
+<table>
+    <tr><th>Produto</th><th>Preço (R$)</th></tr>
+    {% for p in desc_products %}
+    <tr><td>{{ p.nome }}</td><td>R$ {{ "%.2f"|format(p.preco) }}</td></tr>
+    {% endfor %}
+</table>

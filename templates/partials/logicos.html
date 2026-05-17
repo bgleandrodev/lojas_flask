@@ -1,0 +1,5 @@
+<h2>🧠 Operadores Lógicos</h2>
+<div class="grid-container">
+    <div class="card"><strong>✅ preço > 50.00 AND estoque > 0</strong><br>{% for p in logical_and %}{{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }}, estoque: {{ p.estoque }})<br>{% else %}Nenhum produto atende.{% endfor %}</div>
+    <div class="card"><strong>🔄 preço < 30.00 OR categoria = 'Eletrônicos'</strong><br>{% for p in logical_or %}{{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }}, cat: {{ p.categoria }})<br>{% else %}Nenhum produto atende.{% endfor %}</div>
+</div>

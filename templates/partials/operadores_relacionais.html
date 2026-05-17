@@ -1,0 +1,9 @@
+<h2>🔍 Operadores Relacionais (comparação com R$ 50,00)</h2>
+<div class="grid-container">
+    <div class="card"><strong>📌 preço = 50.00</strong><br>{% for p in eq_50 %}{{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }})<br>{% else %}Nenhum produto com preço exatamente 50.00.{% endfor %}</div>
+    <div class="card"><strong>📌 preço ≠ 50.00</strong><br>{% for p in ne_50 %}{{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }})<br>{% endfor %}</div>
+    <div class="card"><strong>📌 preço > 50.00</strong><br>{% for p in gt_50 %}{{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }})<br>{% endfor %}</div>
+    <div class="card"><strong>📌 preço < 50.00</strong><br>{% for p in lt_50 %}{{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }})<br>{% else %}Nenhum produto com preço menor que 50.00.{% endfor %}</div>
+    <div class="card"><strong>📌 preço ≥ 50.00</strong><br>{% for p in ge_50 %}{{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }})<br>{% endfor %}</div>
+    <div class="card"><strong>📌 preço ≤ 50.00</strong><br>{% for p in le_50 %}{{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }})<br>{% endfor %}</div>
+</div>

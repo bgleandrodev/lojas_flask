@@ -53,9 +53,23 @@ tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-tr:hover {
-    background-color: #f1f1f1;
-    transition: background-color 0.3s ease;
+/* Hover para linhas do corpo da tabela (versão limpa) */
+table tbody tr:hover td,
+table tbody tr:hover th {
+    background-color: rgba(52, 152, 219, 0.1);
+    transition: background-color 0.2s ease;
+    cursor: default;
+}
+
+/* Mantém o cabeçalho inalterado */
+table thead tr:hover th {
+    background-color: #3498db;
+}
+
+/* Para tabelas dentro de cards (opacidade menor) */
+.card table tbody tr:hover td,
+.card table tbody tr:hover th {
+    background-color: rgba(52, 152, 219, 0.08);
 }
 
 .badge {

@@ -2,188 +2,64 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOJAS - Gestão de Produtos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <!-- SEO e descrição -->
+    <meta name="description" content="Sistema de gerenciamento de produtos desenvolvido com Flask e SQLite. Consulte produtos, preços, categorias e estoque com filtros avançados.">
+    <meta name="author" content="saturnbells">
+    <meta name="keywords" content="lojas, produtos, flask, sqlite, gerenciamento, estoque">
+    <meta name="robots" content="index, follow">
+    
+    <title>SaturnTech - Gestão de Produtos</title>
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <meta name="theme-color" content="#3498db">
+    <meta name="msapplication-TileColor" content="#3498db">
+    <meta name="msapplication-TileImage" content="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+    
+    <!-- web icon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+    
+    <!-- main / mobile css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
+    
+    <!-- pré carregamento de recursos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- estilos críticos inline para inicialização inicial rápida -->
+    <style>
+        body {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>🏬 LOJAS - Sistema de Gerenciamento de Produtos</h1>
-    <div class="note">
-        ✅ Banco de dados <strong>LOJAS</strong> com tabela <strong>PRODUTOS</strong>.<br>
-        📦 <strong>7 produtos</strong> cadastrados conforme o limite máximo da atividade.
-    </div>
-
-    <h2>📋 Lista Completa de Produtos (7 itens)</h2>
-    <table>
-        <thead>
-            <tr><th>ID</th><th>Nome</th><th>Preço (R$)</th><th>Categoria</th><th>Estoque</th></tr>
-        </thead>
-        <tbody>
-            {% for p in asc_products %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ p.nome }}</td>
-                <td>R$ {{ "%.2f"|format(p.preco) }}</td>
-                <td>
-                    {% if p.nome == 'Produto Preço 50' %}
-                        Eletrônicos
-                    {% elif p.nome == 'Teclado Mecânico' %}
-                        Acessórios
-                    {% elif p.nome == 'Mouse Gamer' %}
-                        Acessórios
-                    {% elif p.nome == 'Monitor 24"' %}
-                        Periféricos
-                    {% elif p.nome == 'Headset Bluetooth' %}
-                        Áudio
-                    {% elif p.nome == 'Notebook Gamer' %}
-                        Computadores
-                    {% else %}
-                        Armazenamento
-                    {% endif %}
-                </td>
-                <td>
-                    {% if p.nome == 'Produto Preço 50' %}
-                        15
-                    {% elif p.nome == 'Teclado Mecânico' %}
-                        10
-                    {% elif p.nome == 'Mouse Gamer' %}
-                        5
-                    {% elif p.nome == 'Monitor 24"' %}
-                        3
-                    {% elif p.nome == 'Headset Bluetooth' %}
-                        7
-                    {% elif p.nome == 'Notebook Gamer' %}
-                        2
-                    {% else %}
-                        12
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <h2>⬆️ ORDER BY - Preço Crescente</h2>
-    <table>
-        <tr><th>Produto</th><th>Preço (R$)</th></tr>
-        {% for p in asc_products %}
-        <tr><td>{{ p.nome }}</td><td>R$ {{ "%.2f"|format(p.preco) }}</td></tr>
-        {% endfor %}
-    </table>
-
-    <h2>⬇️ ORDER BY - Preço Decrescente</h2>
-    <table>
-        <tr><th>Produto</th><th>Preço (R$)</th></tr>
-        {% for p in desc_products %}
-        <tr><td>{{ p.nome }}</td><td>R$ {{ "%.2f"|format(p.preco) }}</td></tr>
-        {% endfor %}
-    </table>
-
-    <h2>🔍 Operadores Relacionais (comparação com R$ 50,00)</h2>
-    <div class="grid-container">
-        <div class="card">
-            <strong>📌 preço = 50.00</strong><br>
-            {% for p in eq_50 %}
-                {{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }})<br>
-            {% else %}
-                Nenhum produto com preço exatamente 50.00.
-            {% endfor %}
+    {% include 'partials/header.html' %}
+    {% include 'partials/lista_produtos.html' %}
+    {% include 'partials/order_by.html' %}
+    {% include 'partials/operadores_relacionais.html' %}
+    {% include 'partials/logicos.html' %}
+    {% include 'partials/agregacoes.html' %}
+    {% include 'partials/footer.html' %}
+    
+    <script src="{{ url_for('static', filename='async_loading.js') }}" defer></script>
+    
+    <noscript>
+        <div class="note" style="background-color: #f8d7da; border-left-color: #dc3545; margin-top: 20px;">
+            ⚠️ Seu navegador está com JavaScript desabilitado. O site funciona corretamente, mas algumas funcionalidades extras podem não estar disponíveis.
         </div>
-        <div class="card">
-            <strong>📌 preço ≠ 50.00</strong><br>
-            {% for p in ne_50 %}
-                {{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }})<br>
-            {% endfor %}
-        </div>
-        <div class="card">
-            <strong>📌 preço > 50.00</strong><br>
-            {% for p in gt_50 %}
-                {{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }})<br>
-            {% endfor %}
-        </div>
-        <div class="card">
-            <strong>📌 preço < 50.00</strong><br>
-            {% for p in lt_50 %}
-                {{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }})<br>
-            {% else %}
-                Nenhum produto com preço menor que 50.00.
-            {% endfor %}
-        </div>
-        <div class="card">
-            <strong>📌 preço ≥ 50.00</strong><br>
-            {% for p in ge_50 %}
-                {{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }})<br>
-            {% endfor %}
-        </div>
-        <div class="card">
-            <strong>📌 preço ≤ 50.00</strong><br>
-            {% for p in le_50 %}
-                {{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }})<br>
-            {% endfor %}
-        </div>
-    </div>
-
-    <h2>🧠 Operadores Lógicos</h2>
-    <div class="grid-container">
-        <div class="card">
-            <strong>✅ preço > 50.00 AND estoque > 0</strong><br>
-            {% for p in logical_and %}
-                {{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }}, estoque: {{ p.estoque }})<br>
-            {% else %}
-                Nenhum produto atende.
-            {% endfor %}
-        </div>
-        <div class="card">
-            <strong>🔄 preço < 30.00 OR categoria = 'Eletrônicos'</strong><br>
-            {% for p in logical_or %}
-                {{ p.nome }} (R$ {{ "%.2f"|format(p.preco) }}, cat: {{ p.categoria }})<br>
-            {% else %}
-                Nenhum produto atende.
-            {% endfor %}
-        </div>
-    </div>
-
-    <h2>📊 Funções de Agregação</h2>
-    <div class="grid-container">
-        <div class="card">
-            <span class="metric">R$ {{ avg_price }}</span>
-            💰 Média de preço (todos os produtos)
-        </div>
-        <div class="card">
-            <span class="metric">{{ total_count }}</span>
-            🔢 Contagem total de produtos
-        </div>
-        <div class="card">
-            <span class="metric">R$ {{ avg_in_stock }}</span>
-            📦 Média de preço (produtos com estoque > 0)
-        </div>
-    </div>
-
-    <h2>📈 Média de preço por categoria</h2>
-    <table>
-        <tr><th>Categoria</th><th>Média de Preço (R$)</th><th>Quantidade</th></tr>
-        {% for row in avg_by_category %}
-        <tr>
-            <td>{{ row.categoria }}</td>
-            <td>R$ {{ "%.2f"|format(row.media_preco) }}</td>
-            <td>{{ row.quantidade }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <h2>📊 Contagem de produtos por categoria</h2>
-    <table>
-        <tr><th>Categoria</th><th>Quantidade</th></tr>
-        {% for row in count_by_category %}
-        <tr>
-            <td>{{ row.categoria }}</td>
-            <td>{{ row.quantidade }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <footer>
-        Desenvolvido com Flask e SQLite para atividade da UNIFAVIP | Copyright (c) 2026 saturnbells
-    </footer>
+    </noscript>
+    
 </body>
 </html>
