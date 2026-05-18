@@ -359,7 +359,7 @@ CREATE TABLE PRODUTOS (
 
 ## 👨‍💻 Autor
 
-**saturnbells** – [![GitHub](https://img.shields.io/badge/GitHub-saturnbells-181717?logo=github)](https://github.com/saturnbells)
+[![GitHub](https://img.shields.io/badge/GitHub-saturnbells-181717?logo=github)](https://github.com/saturnbells)
 
 # 📝 Licença
 Este projeto está sob a licença MIT - veja o arquivo LICENSE para detalhes
