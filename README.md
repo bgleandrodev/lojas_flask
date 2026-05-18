@@ -1,4 +1,4 @@
-# 🏬 LOJAS - Sistema de Gerenciamento de Produtos
+# 🏬 SaturnTech - Sistema de Gerenciamento de Produtos
 
 ## 📋 Sobre o Projeto
 
@@ -9,10 +9,15 @@ Sistema web desenvolvido em **Flask** para gerenciamento de produtos de uma loja
 - Funções de agregação (AVG, COUNT, GROUP BY)
 - Desenvolvimento web com Flask
 - Interface responsiva com HTML5 e CSS3
+- API REST para consumo dos dados
+- Segurança com rate limiting e headers HTTP
+- Testes automatizados com pytest
+- Containerização com Docker
+- Documentação interativa da API
 
 ## 🚀 Funcionalidades
 
-## 📊 Consultas SQL Implementadas
+### 📊 Consultas SQL Implementadas
 
 | Tipo | Consultas |
 |------|-----------|
@@ -21,16 +26,15 @@ Sistema web desenvolvido em **Flask** para gerenciamento de produtos de uma loja
 | **Operadores Lógicos** | `AND` (preço > 50 AND estoque > 0) / `OR` (preço < 30 OR categoria = 'Eletrônicos') |
 | **Agregações** | Média total, contagem total, média por categoria, contagem por categoria |
 
-## 🎨 Interface Web
+### 🎨 Interface Web
 
 - Listagem completa de produtos
 - Exibição de todas as consultas em tabelas organizadas
 - Design responsivo (funciona em desktop e mobile)
+- Cards interativos com métricas
 - Modo Escuro (respeita preferência do sistema)
 - Botão "voltar ao topo" em dispositivos móveis
 - Favicon personalizado
-- Cards interativos com métricas
-- Cores e hover effects para melhor experiência
 
 ### 📦 Consultas Implementadas
 - Produto	Preço	Categoria	Estoque
@@ -42,146 +46,209 @@ Sistema web desenvolvido em **Flask** para gerenciamento de produtos de uma loja
 - SSD 1TB	R$ 600,00	Armazenamento	12
 - Produto Preço 50	R$ 50,00	Eletrônicos	15
 
-# 🧩 Arquitetura Modular
+### 🔒 Segurança
 
-O projeto foi organizado de forma modular para facilitar manutenção e escalabilidade:
+- Variáveis de ambiente: Chave secreta e modo debug via `.env`
+- Rate limiting: 100 requisições/minuto por IP nas rotas API
+- Headers de segurança: X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy
+- SQL Injection: Parâmetros sanitizados (uso de `?` no SQL)
+- .gitignore: Arquivos sensíveis (.env, venv, *.db, app.log) não são versionados
 
-## 📁 Estrutura do Projeto
-
-lojas_flask/
-├── app.py # Aplicação principal (rotas + segurança)
-├── queries.py # Todas as consultas SQL centralizadas
-├── requirements.txt # Dependências do projeto
-├── .env # Variáveis de ambiente (não versionado)
-├── static/
-│ ├── main.css # Estilos principais
-│ ├── mobile.css # Responsividade e Adaptabilidade
-│ ├── async_loading.js # JavaScript assíncrono
-│ └── baturno_web_icon.ico # Favicon
-├── templates/
-│ ├── index.html # Template principal (monta os partials)
-│ └── partials/ # Componentes reutilizáveis
-│ ├── header.html
-│ ├── lista_produtos.html
-│ ├── order_by.html
-│ ├── operadores_relacionais.html
-│ ├── logicos.html
-│ ├── agregacoes.html
-│ └── footer.html
-└── lojas.db # Banco de dados (criado automaticamente)
-
-## 📡 API REST
+### 📡 API REST
 
 O sistema expõe endpoints para consumo programático:
 
-| Endpoint | Método | Descrição |
-|----------|--------|-----------|
-| `/api/produtos` | GET | Lista todos os produtos |
-| `/api/consultas/order_by` | GET | ORDER BY crescente/decrescente |
-| `/api/consultas/relacionais` | GET | Operadores relacionais com 50.00 |
-| `/api/consultas/logicas` | GET | Operadores lógicos (AND/OR) |
-| `/api/consultas/agregacoes` | GET | Médias, contagens e agrupamentos |
+| Endpoint | Método | Descrição | Paginação |
+|----------|--------|-----------|-----------|
+| `/api/produtos` | GET | Lista todos os produtos | ✅ Sim |
+| `/api/produtos/buscar` | GET | Busca produtos com filtros | ✅ Sim |
+| `/api/consultas/order_by` | GET | ORDER BY crescente/decrescente | ❌ |
+| `/api/consultas/relacionais` | GET | Operadores relacionais com 50.00 | ❌ |
+| `/api/consultas/logicas` | GET | Operadores lógicos (AND/OR) | ❌ |
+| `/api/consultas/agregacoes` | GET | Médias, contagens e agrupamentos | ❌ |
 
-**Exemplo de resposta da API:**
+**Parâmetros de busca (`/api/produtos/buscar`):**
+- `nome` - Busca parcial por nome
+- `categoria` - Filtro por categoria exata
+- `min_preco` / `max_preco` - Filtro por faixa de preço
+- `min_estoque` - Estoque mínimo
+- `page` / `per_page` - Paginação
+
+**Exemplo de resposta:**
 ```json
-[
-  {
-    "id": 1,
-    "nome": "Teclado Mecânico",
-    "preco": 250.0,
-    "categoria": "Acessórios",
-    "estoque": 10
-  }
-]
+{
+  "page": 1,
+  "per_page": 5,
+  "total": 7,
+  "total_pages": 2,
+  "data": [
+    {"id": 1, "nome": "Teclado Mecânico", "preco": 250.0, "categoria": "Acessórios", "estoque": 10}
+  ]
+}
+```
+### 📚 Documentação da API
+
+> 📚 **Documentação da API disponível em** [`/api/docs`](http://127.0.0.1:5000/api/docs)
+
+- Lista completa de todos os endpoints
+- Exemplos de uso com **curl**
+- Descrição detalhada de cada consulta
+- Informações sobre rate limiting
+
+## 🧪 Testes Automatizados
+
+O projeto inclui testes unitários com pytest para garantir a qualidade do código:
+
+```bash
+pytest tests/ -v
 ```
 
-## 🔒 Segurança
+```bash
+pytest tests/test_app.py -v
+```
 
-- Variáveis de ambiente: Chave secreta e modo debug via .env
+## 🐳 Docker
 
-- Rate limiting: 100 requisições/minuto por IP nas rotas API
+O projeto pode ser executado em container para fácil implantação:
 
-- Headers de segurança: X-Content-Type-Options, X-Frame-Options, X-XSS-Protection
+### Construir a imagem
+```bash
+docker build -t lojas-flask .
+```
 
-- SQL Injection: Parâmetros sanitizados (uso de ? no SQL)
+### Executar o container
+```bash
+docker run -d -p 5000:5000 --name lojas-app lojas-flask
+```
 
-- .gitignore: Arquivos sensíveis (.env, venv, *.db) não são versionados
+### Visualizar logs
+```bash
+docker logs lojas-app
+```
 
-## 💻 Pré-requisitos
+### Parar o container
+```bash
+docker stop lojas-app
+```
+
+### Remover o container
+```bash
+docker rm lojas-app
+```
+
+## 🧩 Arquitetura Modular
+
+O projeto foi organizado de forma modular para facilitar manutenção e escalabilidade como descrito abaixo na estrutura do projeto:
+
+### 📁 Estrutura do Projeto
+
+```text
+lojas_flask/
+├── app.py                     # Aplicação principal (rotas + segurança)
+├── queries.py                 # Todas as consultas SQL centralizadas
+├── requirements.txt           # Dependências do projeto
+├── .env                       # Variáveis de ambiente (não versionado)
+├── .gitignore                 # Arquivos ignorados pelo Git
+├── Dockerfile                 # Configuração do container Docker
+├── .dockerignore              # Arquivos ignorados pelo Docker
+├── tests/                     # Testes automatizados
+│   └── test_app.py            # Testes da API
+├── static/
+│   ├── main.css               # Estilos principais
+│   ├── mobile.css             # Responsividade e adaptabilidade
+│   ├── async_loading.js       # JavaScript assíncrono
+│   ├── swagger.json           # Documentação OpenAPI/Swagger manual
+│   └── baturno_web_icon.ico   # Favicon
+├── templates/
+│   ├── index.html             # Template principal (monta os partials)
+│   └── partials/              # Componentes reutilizáveis
+│       ├── header.html
+│       ├── lista_produtos.html
+│       ├── order_by.html
+│       ├── operadores_relacionais.html
+│       ├── logicos.html
+│       ├── agregacoes.html
+│       └── footer.html
+├── app.log                    # Logs da aplicação (gerado automaticamente)
+└── lojas.db                   # Banco de dados (criado automaticamente)
+```
+
+# 💻 Pré-requisitos
 Antes de começar, você vai precisar ter instalado em sua máquina:
 - Python 3.8+
 - Git
 - Pip (gerenciador de pacotes Python - já vem com o Python)
+- Docker Desktop (Opcional)
 
-## 🔧 Como Executar o Projeto?
+# 🔧 Como Executar o Projeto?
 
-### 1. Clone o repositório
+## 1. Clone o repositório
 
-# via HTTPS
+### via HTTPS
 ```bash
 git clone https://github.com/saturnbells/lojas_flask.git
 ```
 
-# via SSH (se configurado)
+### Via SSH (se configurado)
 ```bash
 git clone git@github.com:saturnbells/lojas_flask.git
 ```
 
-# acesse a pasta do projeto
+### Acesse a pasta do projeto
 ```bash
 cd lojas_flask
 ```
 
-### 2. Crie um ambiente virtual
+## 2. Crie um ambiente virtual
 
-# Windows (via Git Bash)
+### Windows (via Git Bash)
 ```bash
-`python -m venv venv`
-`source venv/Scripts/activate`
+python -m venv venv
+source venv/Scripts/activate
 ```
 
-# Windows (via CMD ou PowerShell)
+### Windows (via CMD ou PowerShell)
 ```bash
-`python -m venv venv`
-`venv\Scripts\activate`
+python -m venv venv
+venv\Scripts\activate
 ```
 
-# linux ou mac
+### Linux ou Mac
 ```bash
-`python3 -m venv venv`
-`source venv/bin/activate`
+python3 -m venv venv
+source venv/bin/activate
 ```
 
-### 3. Instale as dependências
+## 3. Instale as dependências
 
-# Caso tenha o ambiente virtual ativado
+### Caso tenha o ambiente virtual ativado
 ```bash
-`pip install -r requirements.txt`
+pip install -r requirements.txt
 ```
 
-# Caso queira instalar o Flask diretamente
+### Caso queira instalar o Flask diretamente
 ```bash
-`pip install flask`
+pip install flask
 ```
 
-### 4. Execute a aplicação
+## 4. Execute a aplicação
 
-# Usando o launcher do Python (Windows)
+### Usando o launcher do Python (Windows)
 ```bash
-`py app.py`
+py app.py
 ```
 
-# Ou com python padrão
+### Ou com python padrão
 ```bash
-`python app.py`
+python app.py
 ```
 
-# Ou com python3 (Linux ou Mac)
+### Ou com python3 (Linux ou Mac)
 ```bash
-`python3 app.py`
+python3 app.py
 ```
 
-### 5. Acesse no navegador
+## 5. Acesse no navegador
 Após executar, você verá uma mensagem como:
 
 * Running on http://127.0.0.1:5000
@@ -193,16 +260,47 @@ http://127.0.0.1:5000	Localhost (apenas seu computador)
 http://localhost:5000	Mesmo que o endereço acima
 http://192.168.0.X:5000	IP da sua rede local
 
+## 🔧 Comandos Úteis
+
+```bash
+py app.py
+```
+
+```bash
+pytest tests/ -v
+```
+
+```bash
+tail -f app.log
+```
+
+```bash
+docker build -t lojas-flask .
+docker run -d -p 5000:5000 --name lojas-app lojas-flask
+docker logs lojas-app
+docker stop lojas-app
+```
+
+```bash
+rm -rf __pycache__/
+find . -name "*.pyc" -delete
+```
+
 ## 🛠️ Tecnologias Utilizadas
 
 - Backend: Python 3.14+ / Flask 3.1.3
 - Banco de Dados: SQLite3
-- Frontend: HTML5, CSS3
-- Versionamento: Git
-- Ambiente: Windows / Linux / Mac
+- Frontend: HTML5, CSS3, JavaScript
+- API: REST (JSON)
+- Segurança: python-dotenv, flask-limiter
+- Tests: pytest
+- Containerização: Docker
+- Documentação: Swagger/OpenAPI (manual)
+- Versionamento: Git, Github
 
 ## 📊 Exemplos de Consultas SQL Implementadas
 
+```sql
 -- ORDER BY crescente
 SELECT nome, preco FROM PRODUTOS ORDER BY preco ASC;
 
@@ -245,6 +343,7 @@ FROM PRODUTOS GROUP BY categoria;
 
 -- Média de preço dos produtos em estoque
 SELECT AVG(preco) as media_preco_estoque FROM PRODUTOS WHERE estoque > 0;
+```
 
 ## 🗄️ Estrutura do Banco de Dados
 
@@ -258,10 +357,9 @@ CREATE TABLE PRODUTOS (
 );
 ```
 
-# 👨‍💻 Autor
-saturnbells - GitHub
+## 👨‍💻 Autor
 
-Desenvolvido para atividade da UNIFAVIP - Curso de Ciências da Computação
+**saturnbells** – [![GitHub](https://img.shields.io/badge/GitHub-saturnbells-181717?logo=github)](https://github.com/saturnbells)
 
 # 📝 Licença
 Este projeto está sob a licença MIT - veja o arquivo LICENSE para detalhes
