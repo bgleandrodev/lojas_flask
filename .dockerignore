@@ -1,11 +1,43 @@
+# Ambiente virtual
 venv/
 __pycache__/
 *.pyc
+
+# Banco de dados (não copiar para o container)
+*.db
+*.sqlite
+lojas.db
+
+# Arquivos sensíveis
+.env
 .git/
 .gitignore
+.gitattributes
+
+# Logs (serão montados via volume)
 *.log
-lojas.db
-.env
-.DS_Store
-*.md
+logs/
+
+# IDE e configurações locais
+.vscode/
+.idea/
+*.swp
+
+# Documentação (não necessária no container)
+README.md
+LICENSE
+
+# Testes (não necessários no container)
 tests/
+.pytest_cache/
+
+# Scripts locais (opcionais)
+executar.sh
+
+# Arquivos de backup
+*.bak
+*.backup
+
+# Docker files (não precisam ser copiados)
+Dockerfile
+.dockerignore

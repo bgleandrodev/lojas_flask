@@ -53,7 +53,7 @@ tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-/* Hover para linhas do corpo da tabela (versão limpa) */
+/* hover para linhas do corpo da tabela */
 table tbody tr:hover td,
 table tbody tr:hover th {
     background-color: rgba(52, 152, 219, 0.1);
@@ -66,7 +66,7 @@ table thead tr:hover th {
     background-color: #3498db;
 }
 
-/* Para tabelas dentro de cards (opacidade menor) */
+/* para tabelas dentro de cards */
 .card table tbody tr:hover td,
 .card table tbody tr:hover th {
     background-color: rgba(52, 152, 219, 0.08);
@@ -128,7 +128,7 @@ footer {
     margin-bottom: 8px;
 }
 
-/* Responsividade */
+/* responsividade */
 @media (max-width: 768px) {
     body {
         margin: 10px;
@@ -169,7 +169,7 @@ footer {
     }
 }
 
-/* Estilo para scroll em tabelas grandes em dispositivos móveis */
+/* estilo para scroll em tabelas grandes em dispositivos móveis */
 @media (max-width: 600px) {
     table {
         display: block;

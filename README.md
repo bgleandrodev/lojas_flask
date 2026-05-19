@@ -144,7 +144,7 @@ O projeto foi organizado de forma modular para facilitar manutenção e escalabi
 
 ```text
 lojas_flask/
-├── app.py                     # Aplicação principal (rotas + segurança)
+├── main.py                     # Aplicação principal (rotas + segurança)
 ├── queries.py                 # Todas as consultas SQL centralizadas
 ├── requirements.txt           # Dependências do projeto
 ├── .env                       # Variáveis de ambiente (não versionado)
@@ -235,17 +235,17 @@ pip install flask
 
 ### Usando o launcher do Python (Windows)
 ```bash
-py app.py
+py main.py
 ```
 
 ### Ou com python padrão
 ```bash
-python app.py
+python main.py
 ```
 
 ### Ou com python3 (Linux ou Mac)
 ```bash
-python3 app.py
+python3 main.py
 ```
 
 ## 5. Acesse no navegador
@@ -263,7 +263,7 @@ http://192.168.0.X:5000	IP da sua rede local
 ## 🔧 Comandos Úteis
 
 ```bash
-py app.py
+py main.py
 ```
 
 ```bash
@@ -284,6 +284,79 @@ docker stop lojas-app
 ```bash
 rm -rf __pycache__/
 find . -name "*.pyc" -delete
+```
+
+## 🐳 Comandos Úteis (Docker)
+
+### Construir a imagem
+```bash
+docker run -d -p 5000:5000 --name lojas-app lojas-flask
+```
+
+### Rodar o container
+```bash
+docker run -d -p 5000:5000 --name lojas-app lojas-flask
+```
+
+### Ver logs
+```bash
+docker logs lojas-app
+```
+
+### Ver logs
+```bash
+docker rm -f lojas-app
+```
+
+### Remover o container existente em caso de erro
+```bash
+docker logs lojas-app
+```
+
+### Executar um novo container
+```bash
+docker run -d -p 5000:5000 --name lojas-app lojas-flask
+```
+
+### Ver todos os containers (ativos e parados)
+```bash
+docker ps -a
+```
+
+### Ver apenas os containers ativos
+```bash
+docker ps
+```
+
+### Parar um container (Sem remover)
+```bash
+docker stop lojas-app
+```
+
+### Remover um container parado
+```bash
+docker rm lojas-app
+```
+
+### Forçar remoção (mesmo se estiver rodando)
+```bash
+docker rm -f lojas-app
+```
+
+### Ver logs do container
+```bash
+docker logs lojas-app
+```
+
+### Ver logs em tempo real
+```bash
+docker logs -f lojas-app
+```
+
+### Comando completo para reconstruir imagem e rodar o Docker
+
+```bash
+docker rm -f lojas-app 2>/dev/null; docker build -t lojas-flask . && docker run -d -p 5000:5000 --name lojas-app lojas-flask
 ```
 
 ## 🛠️ Tecnologias Utilizadas

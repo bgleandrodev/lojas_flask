@@ -1,4 +1,5 @@
 import os
+import sys
 import sqlite3
 import logging
 from typing import List, Dict, Any, Optional
@@ -9,10 +10,32 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# ==================== CONFIGURAÇÃO DE LOGGING (COMPATÍVEL COM DOCKER) ====================
+# Define o diretório de logs (usa /app/logs no Docker, ou diretório atual local)
+log_dir = os.environ.get('LOG_DIR', 'logs' if os.path.exists('logs') else '.')
+log_file = os.path.join(log_dir, 'app.log')
+
+# Tenta criar o diretório de logs se não existir
+try:
+    os.makedirs(log_dir, exist_ok=True)
+except (PermissionError, OSError):
+    log_dir = '.'
+    log_file = 'app.log'
+
+# Configuração dos handlers de log
+handlers = [logging.StreamHandler(sys.stdout)]  # Sempre mostra no terminal
+
+# Adiciona file handler apenas se tiver permissão
+try:
+    file_handler = logging.FileHandler(log_file)
+    handlers.append(file_handler)
+except (PermissionError, OSError):
+    print(f"⚠️  Aviso: Não foi possível criar arquivo de log em '{log_file}'")
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[logging.FileHandler('app.log'), logging.StreamHandler()]
+    handlers=handlers
 )
 logger = logging.getLogger(__name__)
 

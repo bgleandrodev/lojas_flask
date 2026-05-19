@@ -3,7 +3,7 @@ import json
 import sys
 import os
 
-# Adiciona o diretório pai ao path para importar o app
+# adiciona o diretório pai ao path para importar o app
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import app
@@ -27,7 +27,7 @@ class TestLojasAPI(unittest.TestCase):
         response = self.app.get('/api/produtos')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
-        self.assertEqual(len(data), 7)  # Deve ter 7 produtos
+        self.assertEqual(len(data), 7)
         self.assertIn('nome', data[0])
         self.assertIn('preco', data[0])
     
@@ -52,7 +52,7 @@ class TestLojasAPI(unittest.TestCase):
         response = self.app.get('/api/consultas/relacionais')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
-        # Produto Preço 50 deve estar no campo 'igual'
+
         produtos_igual = data['igual']
         self.assertTrue(any(p['nome'] == 'Produto Preço 50' for p in produtos_igual))
     
@@ -61,7 +61,7 @@ class TestLojasAPI(unittest.TestCase):
         response = self.app.get('/api/consultas/logicas')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
-        # Todos os produtos do AND devem ter preco > 50 e estoque > 0
+
         for p in data['and']:
             self.assertGreater(p['preco'], 50)
             self.assertGreater(p['estoque'], 0)
