@@ -1,65 +1,109 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    
-    <!-- SEO e descrição -->
-    <meta name="description" content="Sistema de gerenciamento de produtos desenvolvido com Flask e SQLite. Consulte produtos, preços, categorias e estoque com filtros avançados.">
-    <meta name="author" content="saturnbells">
-    <meta name="keywords" content="lojas, produtos, flask, sqlite, gerenciamento, estoque">
-    <meta name="robots" content="index, follow">
-    
-    <title>SaturnTech - Gestão de Produtos</title>
-    
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
-    <meta name="theme-color" content="#3498db">
-    <meta name="msapplication-TileColor" content="#3498db">
-    <meta name="msapplication-TileImage" content="{{ url_for('static', filename='baturno_web_icon.ico') }}">
-    
-    <!-- web icon -->
-    <link rel="shortcut icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
-    
-    <!-- main / mobile css -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
-    
-    <!-- pré carregamento de recursos -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- estilos críticos inline para inicialização inicial rápida -->
-    <style>
-        body {
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            margin: 0;
-            padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-        }
-    </style>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+        
+        <!-- SEO -->
+        <meta name="description" content="Sistema de gerenciamento de produtos desenvolvido com Flask e SQLite. Consulte produtos, preços, categorias e estoque com filtros avançados.">
+        <meta name="author" content="saturnbells">
+        <meta name="keywords" content="lojas, produtos, flask, sqlite, gerenciamento, estoque">
+        <meta name="robots" content="index, follow">
+        
+        <title>SaturnTech - Gestão de Produtos</title>
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="theme-color" content="#3498db">
+        <meta name="msapplication-TileColor" content="#3498db">
+        <meta name="msapplication-TileImage" content="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+        
+        <link rel="shortcut icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+        <link rel="apple-touch-icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+        
+        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        
+        <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    </head>
 
-<body>
-    {% include 'partials/header.html' %}
-    {% include 'partials/lista_produtos.html' %}
-    {% include 'partials/order_by.html' %}
-    {% include 'partials/operadores_relacionais.html' %}
-    {% include 'partials/logicos.html' %}
-    {% include 'partials/agregacoes.html' %}
-    {% include 'partials/footer.html' %}
-    
-    <script src="{{ url_for('static', filename='async_loading.js') }}" defer></script>
-    
-    <noscript>
-        <div class="note" style="background-color: #f8d7da; border-left-color: #dc3545; margin-top: 20px;">
-            ⚠️ Seu navegador está com JavaScript desabilitado. O site funciona corretamente, mas algumas funcionalidades extras podem não estar disponíveis.
+    <body>
+        <div class="dynamic-light" id="dynamicLight"></div>
+        
+        <button class="dark-mode-toggle" id="darkModeToggle">🌙 Modo Escuro</button>
+        
+        <div style="text-align: center;">
+            <a href="/teste-ia" class="btn-ia">Experimente o Assistente com IA →</a>
         </div>
-    </noscript>
-    
-</body>
+
+        {% include 'partials/header.html' %}
+        {% include 'partials/lista_produtos.html' %}
+        {% include 'partials/order_by.html' %}
+        {% include 'partials/operadores_relacionais.html' %}
+        {% include 'partials/logicos.html' %}
+        {% include 'partials/agregacoes.html' %}
+        {% include 'partials/footer.html' %}
+        
+        <script src="{{ url_for('static', filename='async_loading.js') }}" defer></script>
+        
+        <noscript>
+            <div class="note" style="background-color: #f8d7da; border-left-color: #dc3545; margin-top: 20px;">
+                ⚠️ Seu navegador está com JavaScript desabilitado. O site funciona corretamente, mas algumas funcionalidades extras podem não estar disponíveis.
+            </div>
+        </noscript>
+        
+        <script>
+            // Garantir que o modo claro seja o padrão ao carregar a página
+            (function() {
+                // Remove a classe dark-mode se existir (garantia)
+                if (document.body.classList.contains('dark-mode')) {
+                    document.body.classList.remove('dark-mode');
+                }
+                // Atualiza o texto do botão
+                const toggleBtn = document.getElementById('darkModeToggle');
+                if (toggleBtn) {
+                    toggleBtn.textContent = '🌙 Modo Escuro';
+                }
+            })();
+            
+            // Modo escuro - toggle
+            const toggleBtn = document.getElementById('darkModeToggle');
+            toggleBtn.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                const isDark = document.body.classList.contains('dark-mode');
+                toggleBtn.textContent = isDark ? '☀️ Modo Claro' : '🌙 Modo Escuro';
+            });
+            
+            // Luz dinâmica
+            const light = document.getElementById('dynamicLight');
+            let targetX = 50, targetY = 50;
+            let currentX = 50, currentY = 50;
+            
+            document.addEventListener('mousemove', (e) => {
+                targetX = (e.clientX / window.innerWidth) * 100;
+                targetY = (e.clientY / window.innerHeight) * 100;
+            });
+            
+            function animateLight() {
+                currentX += (targetX - currentX) * 0.2;
+                currentY += (targetY - currentY) * 0.2;
+                const isDark = document.body.classList.contains('dark-mode');
+                const color1 = isDark ? 'rgba(80, 120, 255, 0.4)' : 'rgba(255, 200, 100, 0.3)';
+                const color2 = isDark ? 'rgba(50, 80, 200, 0.1)' : 'rgba(255, 150, 50, 0.1)';
+                light.style.background = `radial-gradient(circle at ${currentX}% ${currentY}%, ${color1} 0%, ${color2} 70%, transparent 95%)`;
+                requestAnimationFrame(animateLight);
+            }
+            animateLight();
+            
+            // Classe loaded para animação de fade-in
+            document.addEventListener('DOMContentLoaded', () => {
+                document.body.classList.add('loaded');
+            });
+        </script>
+
+    </body>
+
 </html>

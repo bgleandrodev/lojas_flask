@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOJAS API - Documentação</title>
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Space Grotesk', 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 40px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: white; text-align: center; margin-bottom: 10px; font-size: 2.5em; }
+        .subtitle { text-align: center; color: rgba(255,255,255,0.9); margin-bottom: 40px; }
+        .endpoint { background: white; margin: 20px 0; padding: 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.2s; }
+        .endpoint:hover { transform: translateX(10px); }
+        .method { display: inline-block; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 14px; margin-right: 15px; }
+        .get { background: #28a745; color: white; }
+        .url { font-family: monospace; font-size: 18px; color: #333; font-weight: bold; }
+        .description { color: #666; margin: 10px 0 10px 0; padding-left: 10px; border-left: 3px solid #28a745; }
+        pre { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; overflow-x: auto; font-family: monospace; font-size: 14px; margin-top: 10px; }
+        .badge { display: inline-block; background: #3498db; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 10px; }
+        footer { text-align: center; color: rgba(255,255,255,0.7); margin-top: 40px; padding: 20px; }
+        @media (max-width: 768px) { body { padding: 20px; } .url { font-size: 14px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 LOJAS API</h1>
+        <div class="subtitle">API REST para gerenciamento de produtos | Rate Limit: 100 req/min</div>
+        
+        <div class="endpoint">
+            <div><span class="method get">GET</span> <span class="url">/api/produtos</span> <span class="badge">Paginação</span></div>
+            <div class="description">Lista todos os produtos com suporte a paginação</div>
+            <pre>curl "http://127.0.0.1:5000/api/produtos?page=1&per_page=5"</pre>
+        </div>
+        
+        <div class="endpoint">
+            <div><span class="method get">GET</span> <span class="url">/api/produtos/buscar</span> <span class="badge">Filtros</span></div>
+            <div class="description">Busca produtos por nome, categoria, faixa de preço e estoque mínimo</div>
+            <pre>curl "http://127.0.0.1:5000/api/produtos/buscar?nome=teclado"</pre>
+        </div>
+        
+        <div class="endpoint">
+            <div><span class="method get">GET</span> <span class="url">/api/consultas/order_by</span></div>
+            <div class="description">ORDER BY - Produtos ordenados por preço (crescente e decrescente)</div>
+            <pre>curl "http://127.0.0.1:5000/api/consultas/order_by"</pre>
+        </div>
+        
+        <div class="endpoint">
+            <div><span class="method get">GET</span> <span class="url">/api/consultas/relacionais</span></div>
+            <div class="description">Operadores relacionais - Comparações com o valor R$ 50,00</div>
+            <pre>curl "http://127.0.0.1:5000/api/consultas/relacionais"</pre>
+        </div>
+        
+        <div class="endpoint">
+            <div><span class="method get">GET</span> <span class="url">/api/consultas/logicas</span></div>
+            <div class="description">Operadores lógicos - AND (preço > 50 AND estoque > 0) e OR (preço < 30 OR categoria = 'Eletrônicos')</div>
+            <pre>curl "http://127.0.0.1:5000/api/consultas/logicas"</pre>
+        </div>
+        
+        <div class="endpoint">
+            <div><span class="method get">GET</span> <span class="url">/api/consultas/agregacoes</span></div>
+            <div class="description">Funções de agregação - Média total, contagem, média por categoria, GROUP BY</div>
+            <pre>curl "http://127.0.0.1:5000/api/consultas/agregacoes"</pre>
+        </div>
+        
+        <footer>
+            🔒 Headers de segurança ativos | 📝 Desenvolvido por saturnbells | 🐍 Flask + SQLite
+        </footer>
+    </div>
+</body>
+</html>

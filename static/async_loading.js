@@ -1,40 +1,37 @@
 /* ============================================
-   SATURNTECH - SISTEMA DE GESTÃO DE PRODUTOS
-   Scripts de carregamento assíncrono e melhorias
+   Scripts de carregamento assíncrono e outras melhorias
    ============================================ */
 
-// Aguarda o DOM completamente carregado antes de executar
+// aguarda o DOM completamente carregado antes de executar
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Adiciona classe 'loaded' ao body para animação suave
+    // adiciona classe 'loaded' ao body para animação suave
     document.body.classList.add('loaded');
     
-    // Log de inicialização no console (útil para debug)
+    // log de inicialização no console (para debug) e atualiza o ano atual automaticamente no footer do site
     console.log('🚀 SaturnTech - Sistema de Gestão de Produtos carregado com sucesso!');
     console.log(`📅 Data/Hora: ${new Date().toLocaleString('pt-BR')}`);
     
-    // Atualiza automaticamente o ano atual no footer se existir um elemento com a classe 'ano-atual'
     const anoElement = document.querySelector('.ano-atual');
     if (anoElement) {
         anoElement.textContent = new Date().getFullYear();
     }
     
-    // Adiciona tooltips dinâmicos para tabelas (opcional)
+    // tooltips dinâmicos para tabelas, melhorias para dispositivos móveis
+    // evento de clique nos cards para feedback visual, carrega estatísticas dinâmicas (se necessário no futuro)
     addTableTooltips();
     
-    // Inicializa melhorias para dispositivos móveis
+
     initMobileImprovements();
     
-    // Adiciona evento de clique nos cards para feedback visual
     initCardInteractions();
-    
-    // Carrega estatísticas dinâmicas (se necessário no futuro)
+
     loadDynamicStats();
 });
 
 /**
- * Detecta se o dispositivo é móvel
- * @returns {boolean} Verdadeiro se for dispositivo móvel
+ * detecta se o dispositivo é móvel
+ * @returns {boolean}
  */
 function isMobileDevice() {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -42,7 +39,7 @@ function isMobileDevice() {
 }
 
 /**
- * Adiciona tooltips aos cabeçalhos das tabelas para explicar as colunas
+ * adiciona tooltips aos cabeçalhos das tabelas para explicar as colunas
  */
 function addTableTooltips() {
     const tableHeaders = document.querySelectorAll('th');
@@ -67,26 +64,26 @@ function addTableTooltips() {
 }
 
 /**
- * Inicializa melhorias específicas para dispositivos móveis
+ * melhorias específicas para dispositivos móveis
  */
 function initMobileImprovements() {
     if (isMobileDevice()) {
         console.log('📱 Dispositivo móvel detectado - layout responsivo ativado');
         document.body.classList.add('mobile-view');
         
-        // Adiciona botão de "rolar para o topo" em telas pequenas
+        // botão de "rolar para o topo" em telas pequenas
         addScrollToTopButton();
         
-        // Melhora a experiência de rolagem em tabelas
+        // melhorias a experiência de rolagem em tabelas
         improveTableScrolling();
     }
 }
 
 /**
- * Adiciona um botão flutuante para voltar ao topo da página
- */
+ * adiciona um botão flutuante para voltar ao topo da página
+ */ // verifica se o botão já existe
 function addScrollToTopButton() {
-    // Verifica se o botão já existe
+
     if (document.querySelector('.scroll-top-btn')) return;
     
     const scrollBtn = document.createElement('button');
@@ -118,7 +115,7 @@ function addScrollToTopButton() {
     
     document.body.appendChild(scrollBtn);
     
-    // Mostra/esconde o botão baseado no scroll
+    // mostra ou esconde o botão baseado no scroll do user
     window.addEventListener('scroll', () => {
         if (window.scrollY > 300) {
             scrollBtn.style.opacity = '1';
@@ -131,7 +128,7 @@ function addScrollToTopButton() {
 }
 
 /**
- * Melhora a experiência de rolagem em tabelas em dispositivos móveis
+ * melhoria a experiência de rolagem em tabelas em dispositivos móveis
  */
 function improveTableScrolling() {
     const tables = document.querySelectorAll('table');
@@ -145,7 +142,7 @@ function improveTableScrolling() {
 }
 
 /**
- * Inicializa interações dos cards (feedback visual)
+ * interações dos cards (feedback visual)
  */
 function initCardInteractions() {
     const cards = document.querySelectorAll('.card');
@@ -160,7 +157,7 @@ function initCardInteractions() {
 }
 
 /**
- * Carrega estatísticas dinâmicas via API (exemplo para expansão futura)
+ * carrega estatísticas dinâmicas via API (exemplo para expansão futura)
  */
 async function loadDynamicStats() {
     try {
@@ -169,7 +166,7 @@ async function loadDynamicStats() {
         // const produtos = await response.json();
         // console.log(`📊 Total de produtos disponíveis: ${produtos.length}`);
         
-        // Placeholder para futuras implementações
+        // placeholder para futuras implementações
         console.log('📊 Sistema pronto para carregar estatísticas dinâmicas');
     } catch (error) {
         console.error('❌ Erro ao carregar estatísticas:', error);
@@ -177,9 +174,9 @@ async function loadDynamicStats() {
 }
 
 /**
- * Função utilitária para formatar moeda (caso precise no futuro)
+ * função utilitária para formatar moeda (caso seja necessário no futuro)
  * @param {number} value - Valor a ser formatado
- * @returns {string} Valor formatado em R$
+ * @returns {string} Valor formatado em R$ (Real Brasileiro / Reais)
  */
 function formatCurrency(value) {
     return new Intl.NumberFormat('pt-BR', {
@@ -189,7 +186,7 @@ function formatCurrency(value) {
 }
 
 /**
- * Função utilitária para formatar data (caso precise no futuro)
+ * função utilitária para formatar data (caso seja necessário no futuro)
  * @param {Date} date - Data a ser formatada
  * @returns {string} Data formatada
  */
@@ -197,7 +194,7 @@ function formatDate(date) {
     return new Intl.DateTimeFormat('pt-BR').format(date);
 }
 
-// Exporta funções para uso global (se necessário)
+// exporta funções para uso global (se necessário)
 window.SaturnTech = {
     isMobile: isMobileDevice,
     formatCurrency: formatCurrency,

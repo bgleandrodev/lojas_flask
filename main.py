@@ -6,144 +6,63 @@ from typing import List, Dict, Any, Optional
 from flask import Flask, render_template, jsonify, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from dotenv import load_dotenv
 
-load_dotenv()
+# importa a configuração centralizada
+from config import app_config
 
-# ==================== CONFIGURAÇÃO DE LOGGING (COMPATÍVEL COM DOCKER) ====================
-# Define o diretório de logs (usa /app/logs no Docker, ou diretório atual local)
-log_dir = os.environ.get('LOG_DIR', 'logs' if os.path.exists('logs') else '.')
-log_file = os.path.join(log_dir, 'app.log')
+# ==================== CONFIGURAÇÃO DE LOGGING ====================
+# diretório de logs
+log_dir = os.environ.get('LOG_DIR', app_config.log_dir if os.path.exists(app_config.log_dir) else '.')
+log_file = os.path.join(log_dir, app_config.log_file)
 
-# Tenta criar o diretório de logs se não existir
+# caso o diretório não exista, tenta criar um
 try:
     os.makedirs(log_dir, exist_ok=True)
 except (PermissionError, OSError):
     log_dir = '.'
-    log_file = 'app.log'
+    log_file = app_config.log_file
 
-# Configuração dos handlers de log
-handlers = [logging.StreamHandler(sys.stdout)]  # Sempre mostra no terminal
+# configuração dos handlers de log
+handlers = [logging.StreamHandler(sys.stdout)]
 
-# Adiciona file handler apenas se tiver permissão
+# adiciona file handler apenas se tiver permissão
 try:
     file_handler = logging.FileHandler(log_file)
     handlers.append(file_handler)
 except (PermissionError, OSError):
-    print(f"⚠️  Aviso: Não foi possível criar arquivo de log em '{log_file}'")
+    pass
 
+# usa o formato lido do config
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=app_config.get_log_level(),
+    format=app_config.log_format,
     handlers=handlers
 )
 logger = logging.getLogger(__name__)
 
+logger.info("Iniciando aplicação.")
+
 app = Flask(__name__)
 
-# ==================== ROTAS DE DOCUMENTAÇÃO ====================
-@app.route('/api/docs')
-def api_docs():
-    """Documentação interativa da API"""
-    return '''
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>LOJAS API - Documentação</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 40px; }
-            .container { max-width: 1200px; margin: 0 auto; }
-            h1 { color: white; text-align: center; margin-bottom: 10px; font-size: 2.5em; }
-            .subtitle { text-align: center; color: rgba(255,255,255,0.9); margin-bottom: 40px; }
-            .endpoint { background: white; margin: 20px 0; padding: 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.2s; }
-            .endpoint:hover { transform: translateX(10px); }
-            .method { display: inline-block; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 14px; margin-right: 15px; }
-            .get { background: #28a745; color: white; }
-            .url { font-family: monospace; font-size: 18px; color: #333; font-weight: bold; }
-            .description { color: #666; margin: 10px 0 10px 0; padding-left: 10px; border-left: 3px solid #28a745; }
-            pre { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; overflow-x: auto; font-family: monospace; font-size: 14px; margin-top: 10px; }
-            .badge { display: inline-block; background: #3498db; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 10px; }
-            footer { text-align: center; color: rgba(255,255,255,0.7); margin-top: 40px; padding: 20px; }
-            @media (max-width: 768px) { body { padding: 20px; } .url { font-size: 14px; } }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>📚 LOJAS API</h1>
-            <div class="subtitle">API REST para gerenciamento de produtos | Rate Limit: 100 req/min</div>
-            
-            <div class="endpoint">
-                <div><span class="method get">GET</span> <span class="url">/api/produtos</span> <span class="badge">Paginação</span></div>
-                <div class="description">Lista todos os produtos com suporte a paginação</div>
-                <pre>curl "http://127.0.0.1:5000/api/produtos?page=1&per_page=5"</pre>
-            </div>
-            
-            <div class="endpoint">
-                <div><span class="method get">GET</span> <span class="url">/api/produtos/buscar</span> <span class="badge">Filtros</span></div>
-                <div class="description">Busca produtos por nome, categoria, faixa de preço e estoque mínimo</div>
-                <pre>curl "http://127.0.0.1:5000/api/produtos/buscar?nome=teclado"</pre>
-            </div>
-            
-            <div class="endpoint">
-                <div><span class="method get">GET</span> <span class="url">/api/consultas/order_by</span></div>
-                <div class="description">ORDER BY - Produtos ordenados por preço (crescente e decrescente)</div>
-                <pre>curl "http://127.0.0.1:5000/api/consultas/order_by"</pre>
-            </div>
-            
-            <div class="endpoint">
-                <div><span class="method get">GET</span> <span class="url">/api/consultas/relacionais</span></div>
-                <div class="description">Operadores relacionais - Comparações com o valor R$ 50,00</div>
-                <pre>curl "http://127.0.0.1:5000/api/consultas/relacionais"</pre>
-            </div>
-            
-            <div class="endpoint">
-                <div><span class="method get">GET</span> <span class="url">/api/consultas/logicas</span></div>
-                <div class="description">Operadores lógicos - AND (preço > 50 AND estoque > 0) e OR (preço < 30 OR categoria = 'Eletrônicos')</div>
-                <pre>curl "http://127.0.0.1:5000/api/consultas/logicas"</pre>
-            </div>
-            
-            <div class="endpoint">
-                <div><span class="method get">GET</span> <span class="url">/api/consultas/agregacoes</span></div>
-                <div class="description">Funções de agregação - Média total, contagem, média por categoria, GROUP BY</div>
-                <pre>curl "http://127.0.0.1:5000/api/consultas/agregacoes"</pre>
-            </div>
-            
-            <footer>
-                🔒 Headers de segurança ativos | 📝 Desenvolvido por saturnbells | 🐍 Flask + SQLite
-            </footer>
-        </div>
-    </body>
-    </html>
-    '''
+# ==================== CONFIGURAÇÕES DE SEGURANÇA ====================
+app.secret_key = app_config.secret_key
+DEBUG = app_config.debug
 
-# ==================== ROTAS DE TESTE ====================
-@app.route('/teste123')
-def teste123():
-    return "Teste funcionou!"
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
+)
 
-@app.route('/apidoc')
-def apidoc():
-    return "<h1>FUNCIONOU!</h1><p>Rota /apidoc está funcionando.</p>"
+DATABASE = app_config.database_path
 
-@app.route('/api/documentacao')
-def api_documentacao():
-    return "<h1>Documentação da API</h1><p>Rota alternativa funcionando!</p>"
-
-# ==================== CONFIGURAÇÕES ====================
-app.secret_key = os.getenv('SECRET_KEY', 'dev-key-change-in-production')
-DEBUG = os.getenv('FLASK_ENV') == 'development'
-
-limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"], storage_uri="memory://")
-
-DATABASE = 'lojas.db'
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
+
 
 def init_db():
     conn = get_db_connection()
@@ -157,22 +76,27 @@ def init_db():
             estoque INTEGER NOT NULL DEFAULT 0
         )
     ''')
-    produtos = [
-        ('Teclado Mecânico', 250.00, 'Acessórios', 10),
-        ('Mouse Gamer', 150.00, 'Acessórios', 5),
-        ('Monitor 24"', 1200.00, 'Periféricos', 3),
-        ('Headset Bluetooth', 300.00, 'Áudio', 7),
-        ('Notebook Gamer', 5000.00, 'Computadores', 2),
-        ('SSD 1TB', 600.00, 'Armazenamento', 12),
-        ('Produto Preço 50', 50.00, 'Eletrônicos', 15)
-    ]
-    cursor.execute('DELETE FROM PRODUTOS')
-    for p in produtos:
-        cursor.execute('INSERT INTO PRODUTOS (nome, preco, categoria, estoque) VALUES (?, ?, ?, ?)', p)
+
+    if app_config.init_products:
+        produtos = [
+            ('Teclado Mecânico', 250.00, 'Acessórios', 10),
+            ('Mouse Gamer', 150.00, 'Acessórios', 5),
+            ('Monitor 24"', 1200.00, 'Periféricos', 3),
+            ('Headset Bluetooth', 300.00, 'Áudio', 7),
+            ('Notebook Gamer', 5000.00, 'Computadores', 2),
+            ('SSD 1TB', 600.00, 'Armazenamento', 12),
+            ('Kit de Organização de Cabos', 50.00, 'Eletrônicos', 15)
+        ]
+        cursor.execute('DELETE FROM PRODUTOS')
+        for p in produtos:
+            cursor.execute('INSERT INTO PRODUTOS (nome, preco, categoria, estoque) VALUES (?, ?, ?, ?)', p)
+        logger.info("Banco inicializado com 7 produtos")
+
     conn.commit()
     conn.close()
-    logger.info("Banco inicializado com 7 produtos")
 
+
+# ==================== HEADERS DE SEGURANÇA ====================
 @app.after_request
 def add_security_headers(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
@@ -181,6 +105,31 @@ def add_security_headers(response):
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     return response
 
+
+# ==================== ROTAS DE DOCUMENTAÇÃO ====================
+@app.route('/api/docs')
+def api_docs():
+    """Documentação interativa da API"""
+    return render_template('api_docs.html')
+
+
+# ==================== ROTAS DE TESTE ====================
+@app.route('/teste123')
+def teste123():
+    return "Teste funcionou!"
+
+
+@app.route('/apidoc')
+def apidoc():
+    return "<h1>FUNCIONOU!</h1><p>Rota /apidoc está funcionando.</p>"
+
+
+@app.route('/api/documentacao')
+def api_documentacao():
+    return "<h1>Documentação da API</h1><p>Rota alternativa funcionando!</p>"
+
+
+# ==================== ROTA PRINCIPAL ====================
 @app.route('/')
 def index():
     conn = get_db_connection()
@@ -203,21 +152,22 @@ def index():
     avg_price = round(avg_price, 2) if avg_price else 0
     avg_in_stock = round(avg_in_stock, 2) if avg_in_stock else 0
     return render_template('index.html',
-        asc_products=asc_products, desc_products=desc_products,
-        eq_50=eq_50, ne_50=ne_50, gt_50=gt_50, lt_50=lt_50, ge_50=ge_50, le_50=le_50,
-        logical_and=logical_and, logical_or=logical_or,
-        avg_price=avg_price, total_count=total_count,
-        avg_by_category=avg_by_category, count_by_category=count_by_category,
-        avg_in_stock=avg_in_stock
-    )
+                           asc_products=asc_products, desc_products=desc_products,
+                           eq_50=eq_50, ne_50=ne_50, gt_50=gt_50, lt_50=lt_50, ge_50=ge_50, le_50=le_50,
+                           logical_and=logical_and, logical_or=logical_or,
+                           avg_price=avg_price, total_count=total_count,
+                           avg_by_category=avg_by_category, count_by_category=count_by_category,
+                           avg_in_stock=avg_in_stock)
 
+
+# ==================== API REST ====================
 @app.route('/api/produtos')
 @limiter.limit("100 per minute")
 def api_produtos():
     page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 10, type=int)
+    per_page = request.args.get('per_page', app_config.pagination_per_page, type=int)
     page = max(1, page)
-    per_page = min(max(1, per_page), 50)
+    per_page = min(max(1, per_page), app_config.max_per_page)
     offset = (page - 1) * per_page
     conn = get_db_connection()
     produtos = conn.execute('SELECT * FROM PRODUTOS LIMIT ? OFFSET ?', (per_page, offset)).fetchall()
@@ -228,6 +178,7 @@ def api_produtos():
         'total_pages': (total + per_page - 1) // per_page,
         'data': [dict(row) for row in produtos]
     })
+
 
 @app.route('/api/produtos/buscar')
 @limiter.limit("100 per minute")
@@ -255,9 +206,9 @@ def buscar_produtos():
         query += ' AND estoque >= ?'
         params.append(min_estoque)
     page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 10, type=int)
+    per_page = request.args.get('per_page', app_config.pagination_per_page, type=int)
     page = max(1, page)
-    per_page = min(max(1, per_page), 50)
+    per_page = min(max(1, per_page), app_config.max_per_page)
     offset = (page - 1) * per_page
     conn = get_db_connection()
     count_query = query.replace('SELECT *', 'SELECT COUNT(*) as total')
@@ -276,6 +227,7 @@ def buscar_produtos():
         'data': [dict(row) for row in produtos]
     })
 
+
 @app.route('/api/consultas/order_by')
 @limiter.limit("100 per minute")
 def api_order_by():
@@ -284,6 +236,7 @@ def api_order_by():
     desc = conn.execute('SELECT nome, preco FROM PRODUTOS ORDER BY preco DESC').fetchall()
     conn.close()
     return jsonify({'crescente': [dict(row) for row in asc], 'decrescente': [dict(row) for row in desc]})
+
 
 @app.route('/api/consultas/relacionais')
 @limiter.limit("100 per minute")
@@ -302,6 +255,7 @@ def api_relacionais():
         'maior_igual': [dict(row) for row in ge], 'menor_igual': [dict(row) for row in le]
     })
 
+
 @app.route('/api/consultas/logicas')
 @limiter.limit("100 per minute")
 def api_logicas():
@@ -310,6 +264,7 @@ def api_logicas():
     or_op = conn.execute('SELECT nome, preco, categoria FROM PRODUTOS WHERE preco < 30 OR categoria = "Eletrônicos"').fetchall()
     conn.close()
     return jsonify({'and': [dict(row) for row in and_op], 'or': [dict(row) for row in or_op]})
+
 
 @app.route('/api/consultas/agregacoes')
 @limiter.limit("100 per minute")
@@ -326,6 +281,100 @@ def api_agregacoes():
         'media_estoque': round(media_estoque, 2) if media_estoque else 0,
         'media_por_categoria': [dict(row) for row in media_categoria]
     })
+
+
+# ==================== IA - RECOMENDAÇÃO DE PRODUTOS ====================
+from ai_service import ai_service
+
+
+@app.route('/api/recomendar', methods=['POST'])
+@limiter.limit("10 per minute")
+def recomendar_produtos():
+    """Recomenda produtos baseado em uma consulta em linguagem natural"""
+    data = request.get_json()
+
+    if not data or 'query' not in data:
+        return jsonify({"erro": "Campo 'query' é obrigatório"}), 400
+
+    user_query = data['query'].strip()
+    if not user_query:
+        return jsonify({"erro": "Consulta não pode estar vazia"}), 400
+
+    conn = get_db_connection()
+    products = conn.execute('SELECT id, nome, preco, categoria, estoque FROM PRODUTOS').fetchall()
+    conn.close()
+
+    products_list = [dict(p) for p in products]
+
+    if not ai_service.is_available():
+        return jsonify({
+            "consulta": user_query,
+            "recomendacao": "Serviço de IA não configurado. Configure OPENROUTER_API_KEY no arquivo .env",
+            "produtos_disponiveis": len(products_list),
+            "aviso": "IA não disponível"
+        })
+
+    recommendation = ai_service.recommend_products(user_query, products_list)
+
+    return jsonify({
+        "consulta": user_query,
+        "recomendacao": recommendation,
+        "produtos_disponiveis": len(products_list)
+    })
+
+
+@app.route('/api/produto/descricao/<int:product_id>', methods=['GET'])
+@limiter.limit("20 per minute")
+def gerar_descricao_produto(product_id: int):
+    """Gera uma descrição criativa para um produto específico"""
+
+    conn = get_db_connection()
+    produto = conn.execute(
+        'SELECT id, nome, preco, categoria FROM PRODUTOS WHERE id = ?',
+        (product_id,)
+    ).fetchone()
+    conn.close()
+
+    if not produto:
+        return jsonify({"erro": "Produto não encontrado"}), 404
+
+    try:
+        if ai_service.is_available():
+            descricao = ai_service.generate_description(
+                produto['nome'],
+                produto['categoria'],
+                produto['preco']
+            )
+            aviso = None
+        else:
+            descricao = f"{produto['nome']} - {produto['categoria']} - R${produto['preco']:.2f}"
+            aviso = "IA não configurada. Configure OPENROUTER_API_KEY no arquivo .env"
+
+        return jsonify({
+            "produto": dict(produto),
+            "descricao_gerada": descricao,
+            "aviso": aviso
+        })
+    except Exception as e:
+        logger.error(f"Erro ao gerar descrição: {e}")
+        return jsonify({
+            "produto": dict(produto),
+            "descricao_gerada": f"{produto['nome']} - {produto['categoria']} - R${produto['preco']:.2f}",
+            "erro": str(e)
+        })
+
+
+@app.route('/teste-ia')
+def teste_ia():
+    return render_template('teste_ia.html')
+
+
+@app.route('/api/memoria/limpar', methods=['POST'])
+def limpar_memoria():
+    """Limpa a memória da conversa (inicia nova sessão)"""
+    ai_service.clear_memory()
+    return jsonify({"status": "sucesso", "mensagem": "Memória de conversa reiniciada"})
+
 
 if __name__ == '__main__':
     init_db()

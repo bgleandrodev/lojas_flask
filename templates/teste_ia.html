@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>SaturnTech | Assistente IA</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='baturno_web_icon.ico') }}">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='teste_ia.css') }}">
+</head>
+<body>
+    <div class="dynamic-light" id="dynamicLight"></div>
+    
+    <div class="container">
+        <h1>Assistente de Recomendações</h1>
+        <div class="sub">Pergunte sobre produtos, orçamento, dúvidas técnicas</div>
+        
+        <textarea id="query" placeholder="Exemplo: preciso de um teclado mecânico por até R$300"></textarea>
+        <div style="text-align: center;">
+            <button onclick="testarIA()">Recomendar</button>
+        </div>
+        
+        <div class="result-box">
+            <strong>Resposta:</strong>
+            <pre id="resultado">Aguardando sua pergunta...</pre>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="/" class="back-link">← Voltar para a loja</a>
+        </div>
+    </div>
+    
+    <script>
+        // luz dinâmica
+        const light = document.getElementById('dynamicLight');
+        let targetX = 50, targetY = 50;
+        let currentX = 50, currentY = 50;
+        
+        document.addEventListener('mousemove', (e) => {
+            targetX = (e.clientX / window.innerWidth) * 100;
+            targetY = (e.clientY / window.innerHeight) * 100;
+        });
+        
+        function animateLight() {
+            currentX += (targetX - currentX) * 0.2;
+            currentY += (targetY - currentY) * 0.2;
+            light.style.background = `radial-gradient(circle at ${currentX}% ${currentY}%, rgba(138,106,255,0.35) 0%, rgba(80,80,180,0.1) 70%, transparent 95%)`;
+            requestAnimationFrame(animateLight);
+        }
+        animateLight();
+        
+        async function testarIA() {
+            const query = document.getElementById('query').value;
+            const resultado = document.getElementById('resultado');
+            resultado.textContent = 'Carregando... 🤔';
+            try {
+                const response = await fetch('/api/recomendar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+                const data = await response.json();
+                resultado.textContent = data.recomendacao || JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultado.textContent = 'Erro: ' + error.message;
+            }
+        }
+        
+        document.getElementById('query').addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') testarIA();
+        });
+    </script>
+</body>
+</html>
