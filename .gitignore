@@ -1,0 +1,60 @@
+# Banco de dados
+*.db
+*.sqlite
+*.sqlite3
+lojas.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+.env
+.env.local
+.env.production
+pip-log.txt
+pip-delete-this-directory.txt
+.coverage
+htmlcov/
+
+# Flask
+instance/
+.webassets-cache
+
+# Logs
+*.log
+app.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+desktop.ini
+
+# Backup
+*.bak
+*.backup
+
+# Docker
+.dockerignore
+
+# Testes cache
+.pytest_cache/
+tests/__pycache__/
+
+# Distribuição
+dist/
+build/
+*.egg-info/
