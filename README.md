@@ -78,20 +78,6 @@ O sistema possui um assistente virtual que utiliza modelos de linguagem (via Ope
 
 ### 📡 API REST
 
-O sistema expõe endpoints para consumo programático:
-
-| Endpoint | Método | Descrição | Paginação |
-|----------|--------|-----------|-----------|
-| `/api/produtos` | GET | Lista todos os produtos | ✅ Sim |
-| `/api/produtos/buscar` | GET | Busca produtos com filtros | ✅ Sim |
-| `/api/consultas/order_by` | GET | ORDER BY crescente/decrescente | ❌ |
-| `/api/consultas/relacionais` | GET | Operadores relacionais com 50.00 | ❌ |
-| `/api/consultas/logicas` | GET | Operadores lógicos (AND/OR) | ❌ |
-| `/api/consultas/agregacoes` | GET | Médias, contagens e agrupamentos | ❌ |
-| `/api/recomendar` | POST | Recomendação de produtos com IA | ❌ |
-| `/api/produto/descricao/<id>` | GET | Gera descrição criativa do produto | ❌ |
-| `/api/memoria/limpar` | POST | Limpa o histórico da conversa | ❌ |
-
 **Parâmetros de busca (`/api/produtos/buscar`):**
 - `nome` - Busca parcial por nome
 - `categoria` - Filtro por categoria exata
@@ -200,7 +186,7 @@ lojas_flask/
 ```
 
 # 💻 Pré-requisitos
-Antes de começar, você vai precisar ter instalado em sua máquina:
+Antes de começar, você vai precisar instalar algumas dependências em sua máquina:
 - Python 3.8+
 - Git
 - Pip (gerenciador de pacotes Python)
@@ -425,7 +411,7 @@ docker rm -f lojas-app 2>/dev/null; docker build -t lojas-flask . && docker run 
 - API: REST (JSON)
 - IA: OpenRouter API
 - Segurança: python-dotenv, flask-limiter
-- Tests: pytest
+- Testes: pytest
 - Containerização: Docker
 - Versionamento: Git, Github
 
@@ -494,5 +480,3 @@ CREATE TABLE PRODUTOS (
 
 # 📝 Licença
 Este projeto está sob a licença MIT - veja o arquivo LICENSE para detalhes
-
-Desenvolvido com ❤️🪐 usando Flask e SQLite
