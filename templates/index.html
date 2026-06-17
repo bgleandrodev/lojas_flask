@@ -56,20 +56,16 @@
         </noscript>
         
         <script>
-            // Garantir que o modo claro seja o padrão ao carregar a página
             (function() {
-                // Remove a classe dark-mode se existir (garantia)
                 if (document.body.classList.contains('dark-mode')) {
                     document.body.classList.remove('dark-mode');
                 }
-                // Atualiza o texto do botão
                 const toggleBtn = document.getElementById('darkModeToggle');
                 if (toggleBtn) {
                     toggleBtn.textContent = '🌙 Modo Escuro';
                 }
             })();
             
-            // Modo escuro - toggle
             const toggleBtn = document.getElementById('darkModeToggle');
             toggleBtn.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
@@ -77,7 +73,7 @@
                 toggleBtn.textContent = isDark ? '☀️ Modo Claro' : '🌙 Modo Escuro';
             });
             
-            // Luz dinâmica
+            // luz dinâmica
             const light = document.getElementById('dynamicLight');
             let targetX = 50, targetY = 50;
             let currentX = 50, currentY = 50;
@@ -98,7 +94,7 @@
             }
             animateLight();
             
-            // Classe loaded para animação de fade-in
+            // animação de fade-in
             document.addEventListener('DOMContentLoaded', () => {
                 document.body.classList.add('loaded');
             });
